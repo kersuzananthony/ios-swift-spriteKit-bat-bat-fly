@@ -13,6 +13,7 @@ class TrapUp: Trap {
     convenience init() {
         let trapTopTexture = SKTexture(imageNamed: "trap-top")
         self.init(initWithTexture: trapTopTexture)
+        self.anchorPoint = CGPoint(x: 0.5, y: 1)
         
         for var i = 1; i <= 2; i++ {
             self.trapClosedFrame.append(SKTexture(imageNamed: "trap-top-animation-\(i)"))
@@ -20,7 +21,7 @@ class TrapUp: Trap {
     }
     
     override func initPhysics() {
-        self.physicsBody = SKPhysicsBody(rectangleOfSize: self.size)
+        self.physicsBody = SKPhysicsBody(rectangleOfSize: CGSizeMake(self.size.width, 2 * self.size.height))
         self.physicsBody!.categoryBitMask = GameManager.sharedInstance.COLLIDER_TRAP
         
         super.initPhysics()

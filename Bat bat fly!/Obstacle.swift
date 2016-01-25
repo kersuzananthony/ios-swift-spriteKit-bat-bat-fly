@@ -22,4 +22,10 @@ class Obstacle: Moveable {
         
     }
     
+    func makeItDynamic() {
+        print("make it dynamic again")
+        self.physicsBody!.dynamic = true
+        self.physicsBody!.allowsRotation = true
+    }
+    
 }

@@ -13,25 +13,19 @@ class Box: Obstacle {
     var boxExplosionFrames: [SKTexture] = [SKTexture]()
     
     convenience init() {
-        print("BOX INIT")
-        let boxTexture = SKTexture(imageNamed: "box-explode-0")
-        self.init(texture: boxTexture)
+        //let boxTexture = SKTexture(imageNamed: "box-explode-0")
+        self.init(texture: GameManager.sharedInstance.boxTexture)
         
         self.size = CGSizeMake(GameManager.sharedInstance.BOX_SIZE, GameManager.sharedInstance.BOX_SIZE)
         self.zPosition = 10
-        
-        for var i = 0; i <= 7; i++ {
-            self.boxExplosionFrames.append(SKTexture(imageNamed: "box-explode-\(i)"))
-        }
-
-        //playBoxExplodedAnimation()
+        self.boxExplosionFrames = GameManager.sharedInstance.boxExplodeAnimationTexture
     }
     
     override func initPhysics() {
         self.physicsBody = SKPhysicsBody(rectangleOfSize: self.size)
         self.physicsBody!.categoryBitMask = GameManager.sharedInstance.COLLIDER_BOMB
         self.physicsBody!.contactTestBitMask = GameManager.sharedInstance.COLLIDER_PLAYER
-        self.physicsBody!.collisionBitMask = GameManager.sharedInstance.COLLIDER_PLAYER
+        self.physicsBody!.collisionBitMask = GameManager.sharedInstance.COLLIDER_PLAYER | GameManager.sharedInstance.COLLIDER_GROUND
         self.physicsBody!.usesPreciseCollisionDetection = true
         super.initPhysics()
     }
@@ -40,7 +34,8 @@ class Box: Obstacle {
         self.removeAllActions()
         
         self.runAction(SKAction.animateWithTextures(self.boxExplosionFrames, timePerFrame: 0.1, resize: true, restore: false)) { () -> Void in
-            NSNotificationCenter.defaultCenter().postNotification(NSNotification(name: "stopPhysicWorld", object: nil, userInfo: nil))
+            
+            self.removeFromParent()
         }
     }
 }

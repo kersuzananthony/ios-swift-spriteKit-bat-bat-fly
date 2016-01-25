@@ -13,6 +13,7 @@ class Bat: SKSpriteNode {
     var batFlyFrames = [SKTexture]()
     var batExplodeFrames = [SKTexture]()
     var isFlying = true
+    let batSize: CGFloat = GameManager.sharedInstance.BOX_SIZE * 0.9
     
     convenience init() {
         let firstTexture = SKTexture(imageNamed: "bat-fly-1")
@@ -31,7 +32,7 @@ class Bat: SKSpriteNode {
         }
         
         self.zPosition = GameManager.sharedInstance.playerPosition
-        self.size = CGSizeMake(80, 80)
+        self.size = CGSizeMake(self.batSize, self.batSize)
         
         self.physicsBody = SKPhysicsBody(circleOfRadius: self.size.height / 2)
         self.physicsBody!.allowsRotation = false
@@ -44,6 +45,10 @@ class Bat: SKSpriteNode {
         
         playFlyAnim()
         
+    }
+    
+    func turnPhysicBodyDynamism(value: Bool) {
+        self.physicsBody!.dynamic = value
     }
     
     func playFlyAnim() {
