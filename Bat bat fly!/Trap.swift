@@ -17,7 +17,6 @@ class Trap: Obstacle {
         self.init(texture: initWithTexture)
         self.size.width = trapSize
         self.size.height = initWithTexture.size().height * (self.size.width / initWithTexture.size().width)
-        self.zPosition = 10
     }
     
     override func initPhysics() {
@@ -28,7 +27,7 @@ class Trap: Obstacle {
     
     func playTrapClosedAnimation() {
         self.removeAllActions()
-        
+    
         let scaleYFactor = (self.trapClosedFrame[self.trapClosedFrame.count - 1].size().height * 0.8) / self.size.height
         let scaleXFactor = (self.trapClosedFrame[self.trapClosedFrame.count - 1].size().width * 0.8) / self.size.width
         

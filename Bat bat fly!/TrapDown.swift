@@ -12,14 +12,9 @@ import SpriteKit
 class TrapDown: Trap {
     
     convenience init() {
-        //let trapBottomTexture = SKTexture(imageNamed: "trap-bottom")
         self.init(initWithTexture: GameManager.sharedInstance.trapDown)
         self.anchorPoint = CGPoint(x: 0.5, y: 0)
-        
-//        for var i = 1; i <= 2; i++ {
-//            self.trapClosedFrame.append(SKTexture(imageNamed: "trap-bottom-animation-\(i)"))
-//        }
-        
+    
         self.trapClosedFrame = GameManager.sharedInstance.trapDownCloseAnimationTexture
     }
     

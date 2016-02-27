@@ -10,28 +10,17 @@ import SpriteKit
 
 class Bat: SKSpriteNode {
     
-    var batFlyFrames = [SKTexture]()
-    var batExplodeFrames = [SKTexture]()
     var isFlying = true
     let batSize: CGFloat = GameManager.sharedInstance.BOX_SIZE * 0.9
     
     convenience init() {
-        let firstTexture = SKTexture(imageNamed: "bat-fly-1")
-        self.init(texture: firstTexture)
+        self.init(texture: GameManager.sharedInstance.batTexture)
         setupCharacter()
     }
     
     func setupCharacter() {
         
-        for var x = 1; x <= 6; x++ {
-            batFlyFrames.append(SKTexture(imageNamed: "bat-fly-\(x)"))
-        }
-        
-        for var x = 0; x <= 6; x++ {
-            batExplodeFrames.append(SKTexture(imageNamed: "bat-explode-\(x)"))
-        }
-        
-        self.zPosition = GameManager.sharedInstance.playerPosition
+        self.zPosition = ZPosition.bat.rawValue
         self.size = CGSizeMake(self.batSize, self.batSize)
         
         self.physicsBody = SKPhysicsBody(circleOfRadius: self.size.height / 2)
@@ -47,25 +36,33 @@ class Bat: SKSpriteNode {
         
     }
     
+    func impulse() {
+        self.physicsBody?.velocity = CGVectorMake(0, 0)
+        self.physicsBody?.applyImpulse(CGVectorMake(0, 55))
+    }
+    
     func turnPhysicBodyDynamism(value: Bool) {
         self.physicsBody!.dynamic = value
     }
     
     func playFlyAnim() {
         self.removeAllActions()
-        self.runAction(SKAction.repeatActionForever(SKAction.animateWithTextures(self.batFlyFrames, timePerFrame: 0.1)))
+        self.runAction(SKAction.repeatActionForever(SKAction.animateWithTextures(GameManager.sharedInstance.batFlyingAnimationTexture, timePerFrame: 0.1)))
     }
     
     func playExplodeAnim() {
         self.removeAllActions()
-        let scaleYFactor = self.batExplodeFrames[self.batExplodeFrames.count - 1].size().height / self.size.height
-        let scaleXFactor = self.batExplodeFrames[self.batExplodeFrames.count - 1].size().width / self.size.width
         
-        self.runAction(SKAction.animateWithTextures(self.batExplodeFrames, timePerFrame: 0.1))
-        self.runAction(SKAction.scaleXTo(scaleXFactor, duration: Double(self.batExplodeFrames.count) * 0.1))
-        self.runAction(SKAction.scaleYTo(scaleYFactor, duration: Double(self.batExplodeFrames.count) * 0.1))
+        let explodeFrames = GameManager.sharedInstance.batExplodeAnimationTexture
         
-        _ = NSTimer.scheduledTimerWithTimeInterval(Double(self.batExplodeFrames.count - 1) * 0.1, target: self, selector: "explosionNotification", userInfo: nil, repeats: false)
+        let scaleYFactor = explodeFrames[explodeFrames.count - 1].size().height / self.size.height
+        let scaleXFactor = explodeFrames[explodeFrames.count - 1].size().width / self.size.width
+        
+        self.runAction(SKAction.animateWithTextures(explodeFrames, timePerFrame: 0.1))
+        self.runAction(SKAction.scaleXTo(scaleXFactor, duration: Double(explodeFrames.count) * 0.1))
+        self.runAction(SKAction.scaleYTo(scaleYFactor, duration: Double(explodeFrames.count) * 0.1))
+        
+        _ = NSTimer.scheduledTimerWithTimeInterval(Double(explodeFrames.count - 1) * 0.1, target: self, selector: "explosionNotification", userInfo: nil, repeats: false)
     }
 
     func playTrappedAnim() {

@@ -13,16 +13,18 @@ class ObstacleGroupTop: NSObject {
     var obstacles: [Obstacle] = [Obstacle]()
     
     // MARK: - Initialize all item for ObstacleGroupTop
-    init(numberOfBoxes: CGFloat, screenHeight: CGFloat) {
+    init(numberOfBoxes: CGFloat, screenHeight: CGFloat, difficulty: DifficultyManager) {
         
         for var j: CGFloat = 0; j < numberOfBoxes; j++ {
             let boxNode = Box()
             let yPos: CGFloat = (screenHeight - 48 - boxNode.size.height / 2) - boxNode.size.height * j
+            boxNode.setObstacleSpeed(difficulty.obstacleSpeed)
             boxNode.startMoving(yPos: yPos)
             self.obstacles.append(boxNode)
             
             if j + 1 == numberOfBoxes {
                 let trapTopNode = TrapUp()
+                trapTopNode.setObstacleSpeed(difficulty.obstacleSpeed)
                 trapTopNode.startMoving(yPos: yPos - boxNode.size.height / 2)
                 self.obstacles.append(trapTopNode)
             }
@@ -36,7 +38,6 @@ class ObstacleGroupTop: NSObject {
             var loopCount: Int = 0
             // We got the index
             for var i = boxIndex; i < self.obstacles.count; i++ {
-                //self.obstacles[boxIndex].makeItDynamic()
                 if let boxInObstaclesArray = self.obstacles[i] as? Box {
                     let time = NSTimeInterval(0.4 * Double(loopCount))
                     _ = NSTimer.scheduledTimerWithTimeInterval(time, target: self, selector: "makeItemExplode:", userInfo: boxInObstaclesArray, repeats: false)

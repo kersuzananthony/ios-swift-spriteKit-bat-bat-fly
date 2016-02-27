@@ -10,15 +10,10 @@ import SpriteKit
 
 class Box: Obstacle {
     
-    var boxExplosionFrames: [SKTexture] = [SKTexture]()
-    
     convenience init() {
-        //let boxTexture = SKTexture(imageNamed: "box-explode-0")
         self.init(texture: GameManager.sharedInstance.boxTexture)
         
         self.size = CGSizeMake(GameManager.sharedInstance.BOX_SIZE, GameManager.sharedInstance.BOX_SIZE)
-        self.zPosition = 10
-        self.boxExplosionFrames = GameManager.sharedInstance.boxExplodeAnimationTexture
     }
     
     override func initPhysics() {
@@ -33,7 +28,7 @@ class Box: Obstacle {
     func playBoxExplodedAnimation() {
         self.removeAllActions()
         
-        self.runAction(SKAction.animateWithTextures(self.boxExplosionFrames, timePerFrame: 0.1, resize: true, restore: false)) { () -> Void in
+        self.runAction(SKAction.animateWithTextures(GameManager.sharedInstance.boxExplodeAnimationTexture, timePerFrame: 0.1, resize: true, restore: false)) { () -> Void in
             
             self.removeFromParent()
         }

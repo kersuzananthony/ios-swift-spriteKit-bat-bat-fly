@@ -19,14 +19,15 @@ class ObstacleGroup {
         case Bottom = 2
     }
     
-    init(screenHeight: CGFloat) {
-        let numberBoxes = Int((screenHeight - 48 - GameManager.sharedInstance.GAP_SIZE) / GameManager.sharedInstance.BOX_SIZE)
+    init(screenHeight: CGFloat, difficulty: DifficultyManager) {
+        let numberBoxes = Int((screenHeight - 48 - difficulty.obstacleGap) / GameManager.sharedInstance.BOX_SIZE)
         let numberBoxesTop: CGFloat = CGFloat(arc4random_uniform(UInt32(numberBoxes)) + 1)
         let numberBoxesBottom: CGFloat = CGFloat(numberBoxes) - numberBoxesTop
         
-        self.obstacleGroupBottom = ObstacleGroupBottom(numberOfBoxes: numberBoxesBottom)
-        self.obstacleGroupTop = ObstacleGroupTop(numberOfBoxes: numberBoxesTop, screenHeight: screenHeight)
+        self.obstacleGroupBottom = ObstacleGroupBottom(numberOfBoxes: numberBoxesBottom, difficulty: difficulty)
+        self.obstacleGroupTop = ObstacleGroupTop(numberOfBoxes: numberBoxesTop, screenHeight: screenHeight, difficulty: difficulty)
         self.scoreGate = ScoreGate(screenHeight: screenHeight)
+        self.scoreGate.setObstacleSpeed(difficulty.obstacleSpeed)
         self.scoreGate.startMoving(yPos: self.scoreGate.size.height / 2)
     }
     

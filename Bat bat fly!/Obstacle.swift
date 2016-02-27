@@ -10,11 +10,22 @@ import SpriteKit
 
 class Obstacle: Moveable {
     
+    private var _obstacleGroup: ObstacleGroup!
+    
+    var obstacleGroup: ObstacleGroup {
+        return self._obstacleGroup
+    }
+    
+    convenience init(texture: SKTexture, obstacleGroup: ObstacleGroup) {
+        self.init(texture: texture)
+        self._obstacleGroup = obstacleGroup
+    }
+    
     override func startMoving(yPos yPos: CGFloat) {
-        self.ITEM_SPEED = GameManager.sharedInstance.OBSTACLES_SPEED
         super.startMoving(yPos: yPos)
         
         self.initPhysics()
+        self.zPosition = ZPosition.obstacle.rawValue
     }
     
     func initPhysics() {
@@ -23,9 +34,12 @@ class Obstacle: Moveable {
     }
     
     func makeItDynamic() {
-        print("make it dynamic again")
         self.physicsBody!.dynamic = true
         self.physicsBody!.allowsRotation = true
+    }
+    
+    func setObstacleSpeed(speed: CGFloat) {
+        self.ITEM_SPEED = speed
     }
     
 }

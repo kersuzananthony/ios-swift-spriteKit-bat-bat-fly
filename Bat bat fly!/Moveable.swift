@@ -9,8 +9,8 @@
 import SpriteKit
 
 class Moveable: SKSpriteNode {
-    static let RESET_X_POS: CGFloat = -800
-    static let START_X_POS: CGFloat = 800
+    static let RESET_X_POS: CGFloat = -1400
+    static let START_X_POS: CGFloat = 1400
     
     var moveAction: SKAction!
     var moveForever: SKAction!
@@ -34,7 +34,6 @@ class Moveable: SKSpriteNode {
     func didExceedBounds() {
         NSNotificationCenter.defaultCenter().postNotification(NSNotification(name: "removeMoveableObject", object: self))
         self.removeFromParent()
-        print("remove from parent")
     }
 }
 

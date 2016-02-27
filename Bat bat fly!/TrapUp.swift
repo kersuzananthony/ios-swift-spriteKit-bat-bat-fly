@@ -11,13 +11,10 @@ import SpriteKit
 class TrapUp: Trap {
     
     convenience init() {
-        let trapTopTexture = SKTexture(imageNamed: "trap-top")
-        self.init(initWithTexture: trapTopTexture)
+        self.init(initWithTexture: GameManager.sharedInstance.trapTop)
         self.anchorPoint = CGPoint(x: 0.5, y: 1)
-        
-        for var i = 1; i <= 2; i++ {
-            self.trapClosedFrame.append(SKTexture(imageNamed: "trap-top-animation-\(i)"))
-        }
+    
+        self.trapClosedFrame = GameManager.sharedInstance.trapTopCloseAnimationTexture
     }
     
     override func initPhysics() {
