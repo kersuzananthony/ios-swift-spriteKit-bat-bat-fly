@@ -2,7 +2,7 @@
 //  Moveable.swift
 //  RetroSkate
 //
-//  Created by Mark Price on 10/15/15.
+//  Created by Kersuzan Anthony on 20/01/2016.
 //  Copyright © 2015 Devslopes. All rights reserved.
 //
 
