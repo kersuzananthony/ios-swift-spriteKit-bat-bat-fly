@@ -67,14 +67,14 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         self.gamePlayTime = GameManager.sharedInstance.getHowManyPlayerPlayedGame()
         
         // Notifications
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "showGameCenterStatistics", name: "classmentButton", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "shareTo:", name: "shareButton", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "rateApp", name: "rateButton", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "gameOver", name: "gameOver", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(GameViewController.showGameCenterStatistics), name: "classmentButton", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(GameViewController.shareTo(_:)), name: "shareButton", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(GameViewController.rateApp), name: "rateButton", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(GameViewController.gameOver), name: "gameOver", object: nil)
     }
     
     func gameOver() {
-        gamePlayTime++
+        gamePlayTime += 1
         
         GameManager.sharedInstance.setHowManyPlayerPlayerGame(self.gamePlayTime)
         

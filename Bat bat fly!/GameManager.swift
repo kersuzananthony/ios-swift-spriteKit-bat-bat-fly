@@ -150,23 +150,23 @@ class GameManager {
         self.trapDown = textureAtlas.textureNamed("trap-bottom")
         self.trapTop = textureAtlas.textureNamed("trap-top")
     
-        for var i = 1; i <= 2; i++ {
+        for i in 1...2 {
             self.trapDownCloseAnimationTexture.append(textureAtlas.textureNamed("trap-bottom-animation-\(i)"))
         }
         
-        for var i = 1; i <= 2; i++ {
+        for i in 1...2 {
             self.trapTopCloseAnimationTexture.append(textureAtlas.textureNamed("trap-top-animation-\(i)"))
         }
         
-        for var i = 0; i <= 7; i++ {
+        for i in 0...7 {
             self.boxExplodeAnimationTexture.append(self.textureAtlas.textureNamed("box-explode-\(i)"))
         }
         
-        for var i = 0; i <= 6; i++ {
+        for i in 0...6 {
             self.batExplodeAnimationTexture.append(self.textureAtlas.textureNamed("bat-explode-\(i)"))
         }
         
-        for var i = 1; i <= 6; i++ {
+        for i in 1...6 {
             self.batFlyingAnimationTexture.append(self.textureAtlas.textureNamed("bat-fly-\(i)"))
         }
         

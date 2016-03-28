@@ -62,7 +62,7 @@ class Bat: SKSpriteNode {
         self.runAction(SKAction.scaleXTo(scaleXFactor, duration: Double(explodeFrames.count) * 0.1))
         self.runAction(SKAction.scaleYTo(scaleYFactor, duration: Double(explodeFrames.count) * 0.1))
         
-        _ = NSTimer.scheduledTimerWithTimeInterval(Double(explodeFrames.count - 1) * 0.1, target: self, selector: "explosionNotification", userInfo: nil, repeats: false)
+        _ = NSTimer.scheduledTimerWithTimeInterval(Double(explodeFrames.count - 1) * 0.1, target: self, selector: #selector(Bat.explosionNotification), userInfo: nil, repeats: false)
     }
 
     func playTrappedAnim() {

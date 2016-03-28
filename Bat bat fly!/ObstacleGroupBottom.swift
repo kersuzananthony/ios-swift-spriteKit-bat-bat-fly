@@ -12,11 +12,11 @@ class ObstacleGroupBottom: NSObject {
  
     var obstacles: [Obstacle] = [Obstacle]()
     
-    init(numberOfBoxes: CGFloat, difficulty: DifficultyManager) {
+    init(numberOfBoxes: Int, difficulty: DifficultyManager) {
         // Put box on the bottom
-        for var i: CGFloat = 0; i < numberOfBoxes; i++ {
+        for i: Int in 0 ..< numberOfBoxes {
             let boxNode = Box()
-            let yPos: CGFloat = boxNode.size.height / 2 + boxNode.size.height * i
+            let yPos: CGFloat = boxNode.size.height / 2 + boxNode.size.height * CGFloat(i)
             boxNode.setObstacleSpeed(difficulty.obstacleSpeed)
             boxNode.startMoving(yPos: yPos)
             self.obstacles.append(boxNode)
@@ -38,11 +38,11 @@ class ObstacleGroupBottom: NSObject {
             
             var loopCount: Int = 0
             // We got the index
-            for var i = boxIndex; i < self.obstacles.count; i++ {
+            for i in boxIndex ..< self.obstacles.count {
                 if let boxInObstaclesArray = self.obstacles[i] as? Box {
                     let time = NSTimeInterval(0.3 * Double(loopCount))
-                    _ = NSTimer.scheduledTimerWithTimeInterval(time, target: self, selector: "makeItemExplode:", userInfo: boxInObstaclesArray, repeats: false)
-                    loopCount++
+                    _ = NSTimer.scheduledTimerWithTimeInterval(time, target: self, selector: #selector(ObstacleGroupBottom.makeItemExplode(_:)), userInfo: boxInObstaclesArray, repeats: false)
+                    loopCount += 1
                 }
             }
         }

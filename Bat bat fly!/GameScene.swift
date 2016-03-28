@@ -87,8 +87,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     // MARK: -Add observes for the following notifications
     func registerForNotifications() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "windowIsNowBroken", name: "explosionNotification", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "removeMoveableObject:", name: "removeMoveableObject", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(GameScene.windowIsNowBroken), name: "explosionNotification", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(GameScene.removeMoveableObject(_:)), name: "removeMoveableObject", object: nil)
     }
     
     // MARK: - Preload all the sound effects the game needs
@@ -164,12 +164,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let moveByXAction = SKAction.moveByX(GameManager.sharedInstance.BACKGROUND_SPEED, y: 0, duration: 0.02)
         let moveBackgroundForever = SKAction.repeatActionForever(moveByXAction)
 
-        for var i: CGFloat = 0; i < 3; i++ {
+        for i: Int in 0 ..< 3 {
             let backgroundNode = SKSpriteNode(texture: backgroundTexture)
             backgroundNode.size.height = self.BACKGROUND_DIMENSION.height * coefToScale
             backgroundNode.size.width = (backgroundNode.size.height / self.BACKGROUND_DIMENSION.height) * self.BACKGROUND_DIMENSION.width
             backgroundNode.anchorPoint = CGPoint(x: 0, y: 0)
-            backgroundNode.position = CGPoint(x: backgroundNode.size.width * i, y: 0)
+            backgroundNode.position = CGPoint(x: backgroundNode.size.width * CGFloat(i), y: 0)
             backgroundNode.zPosition = ZPosition.background.rawValue
             
             self.backgrounds.addChild(backgroundNode)
@@ -261,8 +261,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     // MARK: - Create times for making obstacles and chain
     func createTimers() {
-        self.makeBoxesTimer = NSTimer.scheduledTimerWithTimeInterval(2, target: self, selector: "makeObstacles", userInfo: nil, repeats: true)
-        self.makeChainsTimer = NSTimer.scheduledTimerWithTimeInterval(1.5, target: self, selector: "makeChain", userInfo: nil, repeats: true)
+        self.makeBoxesTimer = NSTimer.scheduledTimerWithTimeInterval(2, target: self, selector: #selector(GameScene.makeObstacles), userInfo: nil, repeats: true)
+        self.makeChainsTimer = NSTimer.scheduledTimerWithTimeInterval(1.5, target: self, selector: #selector(GameScene.makeChain), userInfo: nil, repeats: true)
     }
     
     // MARK: - Update the score label at the bottom of the screen
@@ -335,7 +335,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     self.sfxMetal.play()
                 }
                 
-                _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "displayGameOverMessage", userInfo: nil, repeats: false)
+                _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(GameScene.displayGameOverMessage), userInfo: nil, repeats: false)
 
                 
             } else if contact.bodyA.categoryBitMask == self.colliderBomb || contact.bodyB.categoryBitMask == self.colliderBomb {
@@ -492,7 +492,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.sfxGlass.play()
         }
         
-        _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "displayGameOverMessage", userInfo: nil, repeats: false)
+        _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(GameScene.displayGameOverMessage), userInfo: nil, repeats: false)
     }
     
     // MARK: - Function called when user loses and animations have been played
@@ -510,7 +510,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             child.removeFromParent()
         }
         
-        _ = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: "canReplay", userInfo: nil, repeats: false)
+        _ = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(GameScene.canReplay), userInfo: nil, repeats: false)
     }
     
     // MARK: - Function called when the user starts the game (= first tap on the game)
@@ -677,7 +677,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     // MARK: - Update user's score
     func updateScore() {
-        self.score++
+        self.score += 1
         self.updateScoreText()
         self.difficultyManager.increaseDifficulty(self.score)
     }
@@ -691,7 +691,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 object.update()
             }
             
-            for var x = 0; x < 3; x++ {
+            for x in 0 ..< 3 {
                 
                 if self.backgroundsArray[x].position.x <= BG_X_RESET {
                     var index: Int!

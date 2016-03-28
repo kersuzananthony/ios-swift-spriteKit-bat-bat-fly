@@ -21,8 +21,8 @@ class ObstacleGroup {
     
     init(screenHeight: CGFloat, difficulty: DifficultyManager) {
         let numberBoxes = Int((screenHeight - 48 - difficulty.obstacleGap) / GameManager.sharedInstance.BOX_SIZE)
-        let numberBoxesTop: CGFloat = CGFloat(arc4random_uniform(UInt32(numberBoxes)) + 1)
-        let numberBoxesBottom: CGFloat = CGFloat(numberBoxes) - numberBoxesTop
+        let numberBoxesTop: Int = Int(arc4random_uniform(UInt32(numberBoxes)) + 1)
+        let numberBoxesBottom: Int = numberBoxes - numberBoxesTop
         
         self.obstacleGroupBottom = ObstacleGroupBottom(numberOfBoxes: numberBoxesBottom, difficulty: difficulty)
         self.obstacleGroupTop = ObstacleGroupTop(numberOfBoxes: numberBoxesTop, screenHeight: screenHeight, difficulty: difficulty)
