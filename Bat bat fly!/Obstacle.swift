@@ -10,7 +10,7 @@ import SpriteKit
 
 class Obstacle: Moveable {
     
-    private var _obstacleGroup: ObstacleGroup!
+    fileprivate var _obstacleGroup: ObstacleGroup!
     
     var obstacleGroup: ObstacleGroup {
         return self._obstacleGroup
@@ -21,7 +21,7 @@ class Obstacle: Moveable {
         self._obstacleGroup = obstacleGroup
     }
     
-    override func startMoving(yPos yPos: CGFloat) {
+    override func startMoving(yPos: CGFloat) {
         super.startMoving(yPos: yPos)
         
         self.initPhysics()
@@ -29,16 +29,16 @@ class Obstacle: Moveable {
     }
     
     func initPhysics() {
-        self.physicsBody?.dynamic = false
+        self.physicsBody?.isDynamic = false
         
     }
     
     func makeItDynamic() {
-        self.physicsBody!.dynamic = true
+        self.physicsBody!.isDynamic = true
         self.physicsBody!.allowsRotation = true
     }
     
-    func setObstacleSpeed(speed: CGFloat) {
+    func setObstacleSpeed(_ speed: CGFloat) {
         self.ITEM_SPEED = speed
     }
     

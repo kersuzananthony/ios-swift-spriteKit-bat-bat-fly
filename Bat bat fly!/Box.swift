@@ -13,11 +13,11 @@ class Box: Obstacle {
     convenience init() {
         self.init(texture: GameManager.sharedInstance.boxTexture)
         
-        self.size = CGSizeMake(GameManager.sharedInstance.BOX_SIZE, GameManager.sharedInstance.BOX_SIZE)
+        self.size = CGSize(width: GameManager.sharedInstance.BOX_SIZE, height: GameManager.sharedInstance.BOX_SIZE)
     }
     
     override func initPhysics() {
-        self.physicsBody = SKPhysicsBody(rectangleOfSize: self.size)
+        self.physicsBody = SKPhysicsBody(rectangleOf: self.size)
         self.physicsBody!.categoryBitMask = GameManager.sharedInstance.COLLIDER_BOMB
         self.physicsBody!.contactTestBitMask = GameManager.sharedInstance.COLLIDER_PLAYER
         self.physicsBody!.collisionBitMask = GameManager.sharedInstance.COLLIDER_PLAYER | GameManager.sharedInstance.COLLIDER_GROUND
@@ -28,9 +28,9 @@ class Box: Obstacle {
     func playBoxExplodedAnimation() {
         self.removeAllActions()
         
-        self.runAction(SKAction.animateWithTextures(GameManager.sharedInstance.boxExplodeAnimationTexture, timePerFrame: 0.1, resize: true, restore: false)) { () -> Void in
+        self.run(SKAction.animate(with: GameManager.sharedInstance.boxExplodeAnimationTexture, timePerFrame: 0.1, resize: true, restore: false), completion: { () -> Void in
             
             self.removeFromParent()
-        }
+        }) 
     }
 }

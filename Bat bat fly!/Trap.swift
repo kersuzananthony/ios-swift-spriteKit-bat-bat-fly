@@ -31,8 +31,8 @@ class Trap: Obstacle {
         let scaleYFactor = (self.trapClosedFrame[self.trapClosedFrame.count - 1].size().height * 0.8) / self.size.height
         let scaleXFactor = (self.trapClosedFrame[self.trapClosedFrame.count - 1].size().width * 0.8) / self.size.width
         
-        self.runAction(SKAction.animateWithTextures(self.trapClosedFrame, timePerFrame: 0.2))
-        self.runAction(SKAction.scaleXTo(scaleXFactor, duration: Double(self.trapClosedFrame.count) * 0.2))
-        self.runAction(SKAction.scaleYTo(scaleYFactor, duration: Double(self.trapClosedFrame.count) * 0.2))
+        self.run(SKAction.animate(with: self.trapClosedFrame, timePerFrame: 0.2))
+        self.run(SKAction.scaleX(to: scaleXFactor, duration: Double(self.trapClosedFrame.count) * 0.2))
+        self.run(SKAction.scaleY(to: scaleYFactor, duration: Double(self.trapClosedFrame.count) * 0.2))
     }
 }

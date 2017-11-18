@@ -17,11 +17,11 @@ enum DifficultyLevel: String {
 
 class DifficultyManager {
     
-    private var _difficultyLevel: DifficultyLevel
-    private var _initialObstacleSpeed: CGFloat!
-    private var _obstacleSpeed: CGFloat!
-    private var _obstacleGap: CGFloat!
-    private var _hasReducedGap: Bool!
+    fileprivate var _difficultyLevel: DifficultyLevel
+    fileprivate var _initialObstacleSpeed: CGFloat!
+    fileprivate var _obstacleSpeed: CGFloat!
+    fileprivate var _obstacleGap: CGFloat!
+    fileprivate var _hasReducedGap: Bool!
     
     let MAX_OBSTACLE_SPEED: CGFloat = -12
     
@@ -84,7 +84,7 @@ class DifficultyManager {
         }
     }
     
-    func increaseDifficulty(score: Int) {
+    func increaseDifficulty(_ score: Int) {
         increaseSpeed()
         
         if score == getReduceObstacleGapLimit() {

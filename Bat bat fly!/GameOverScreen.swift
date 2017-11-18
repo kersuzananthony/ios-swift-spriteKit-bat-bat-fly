@@ -29,7 +29,7 @@ class GameOverScreen: SKSpriteNode {
         self.init(texture: gameOverMiniScreenTexture)
         self.size.width =  screenWidth < 400 ? 400 : screenWidth
         self.size.height = gameOverMiniScreenTexture.size().height * (self.size.width / gameOverMiniScreenTexture.size().width)
-        self.position = CGPoint(x: CGRectGetMidX(frame), y: CGRectGetMidY(frame))
+        self.position = CGPoint(x: frame.midX, y: frame.midY)
         self.zPosition = ZPosition.gameOverScreen.rawValue
         
         self.playerScoreNodes = SKSpriteNode()
@@ -48,8 +48,8 @@ class GameOverScreen: SKSpriteNode {
     
         positionNodes()
         
-        let scaleOutAction = SKAction.scaleTo(0, duration: 0)
-        self.runAction(scaleOutAction)
+        let scaleOutAction = SKAction.scale(to: 0, duration: 0)
+        self.run(scaleOutAction)
     }
     
     func positionNodes() {
@@ -73,16 +73,16 @@ class GameOverScreen: SKSpriteNode {
         self.gameOverNode.position = CGPoint(x: 0, y: self.frame.size.height / 2 - self.gameOverNode.size.height / 2 - self.ITEM_GAP_RATIO * self.frame.height)
         
         // GameOverNode Animation
-        let scaleUpAction = SKAction.scaleTo(1.2, duration: 0)
-        let scaleDownAction = SKAction.scaleTo(1.0, duration: 0.5)
+        let scaleUpAction = SKAction.scale(to: 1.2, duration: 0)
+        let scaleDownAction = SKAction.scale(to: 1.0, duration: 0.5)
         let scaleSequence = SKAction.sequence([scaleUpAction, scaleDownAction])
-        let fadeInAction = SKAction.fadeInWithDuration(0.5)
-        let waitAction = SKAction.waitForDuration(0.5)
-        let fadeOutAction = SKAction.fadeAlphaTo(0.5, duration: 1)
+        let fadeInAction = SKAction.fadeIn(withDuration: 0.5)
+        let waitAction = SKAction.wait(forDuration: 0.5)
+        let fadeOutAction = SKAction.fadeAlpha(to: 0.5, duration: 1)
         let fadeInOutSequence = SKAction.sequence([waitAction, fadeOutAction, fadeInAction])
-        let fadeInOutSequenceForever = SKAction.repeatActionForever(fadeInOutSequence)
-        self.gameOverNode.runAction(scaleSequence)
-        self.gameOverNode.runAction(fadeInOutSequenceForever)
+        let fadeInOutSequenceForever = SKAction.repeatForever(fadeInOutSequence)
+        self.gameOverNode.run(scaleSequence)
+        self.gameOverNode.run(fadeInOutSequenceForever)
 
         self.addChild(self.gameOverNode)
     }
@@ -102,7 +102,7 @@ class GameOverScreen: SKSpriteNode {
     }
 
     
-    func makePlayerTextNode(score: Int) {
+    func makePlayerTextNode(_ score: Int) {
     
         let availableWidth: CGFloat = self.frame.width - self.yourScoreNode.frame.width - self.TEXT_NODE_GAP
         
@@ -134,7 +134,7 @@ class GameOverScreen: SKSpriteNode {
     }
 
     
-    func makeBestTextNode(bestScore: Int) {
+    func makeBestTextNode(_ bestScore: Int) {
     
         let availableWidth: CGFloat = self.frame.width - self.bestScoreNode.frame.width - self.TEXT_NODE_GAP
         
@@ -209,7 +209,7 @@ class GameOverScreen: SKSpriteNode {
         
     }
     
-    func calculateTextNodeSize(originalSize: CGSize, availableWidth: CGFloat) -> (newSize: CGSize, ratio: CGFloat) {
+    func calculateTextNodeSize(_ originalSize: CGSize, availableWidth: CGFloat) -> (newSize: CGSize, ratio: CGFloat) {
         // Need to calculate width and height for better display
         var height = self.size.height * self.ITEM_HEIGHT_RATIO
         var width: CGFloat = 0
@@ -224,19 +224,19 @@ class GameOverScreen: SKSpriteNode {
             ratio = width / originalSize.width
         }
 
-        return (CGSizeMake(width, height), ratio)
+        return (CGSize(width: width, height: height), ratio)
     }
     
     func displayGameOverScreen() {
-        let scaleAction = SKAction.scaleTo(1, duration: 0.3)
-        self.runAction(scaleAction)
+        let scaleAction = SKAction.scale(to: 1, duration: 0.3)
+        self.run(scaleAction)
     }
     
     func removeGameOverScreen() {
-        let scaleAction = SKAction.scaleTo(0, duration: 0.5)
-        self.runAction(scaleAction) { () -> Void in
+        let scaleAction = SKAction.scale(to: 0, duration: 0.5)
+        self.run(scaleAction, completion: { () -> Void in
             self.removeFromParent()
-        }
+        }) 
     }
     
 }

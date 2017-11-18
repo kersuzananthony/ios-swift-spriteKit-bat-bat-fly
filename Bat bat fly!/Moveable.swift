@@ -16,13 +16,13 @@ class Moveable: SKSpriteNode {
     var moveForever: SKAction!
     var ITEM_SPEED: CGFloat = 0
     
-    func startMoving(yPos yPos: CGFloat) {
-        self.position = CGPointMake(Moveable.START_X_POS, yPos)
+    func startMoving(yPos: CGFloat) {
+        self.position = CGPoint(x: Moveable.START_X_POS, y: yPos)
 
-        moveAction = SKAction.moveByX(self.ITEM_SPEED, y: 0, duration: 0.02)
-        moveForever = SKAction.repeatActionForever(moveAction)
+        moveAction = SKAction.moveBy(x: self.ITEM_SPEED, y: 0, duration: 0.02)
+        moveForever = SKAction.repeatForever(moveAction)
         
-        self.runAction(moveForever, withKey: "moveItForever")
+        self.run(moveForever, withKey: "moveItForever")
     }
     
     override func update() {
@@ -32,7 +32,7 @@ class Moveable: SKSpriteNode {
     }
     
     func didExceedBounds() {
-        NSNotificationCenter.defaultCenter().postNotification(NSNotification(name: "removeMoveableObject", object: self))
+        NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: "removeMoveableObject"), object: self))
         self.removeFromParent()
     }
 }

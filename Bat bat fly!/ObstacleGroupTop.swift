@@ -33,17 +33,17 @@ class ObstacleGroupTop: NSObject {
     }
 
     // MARK: - This function is called by ObstacleGroup:makeCascadeExplosion() method
-    func makeCascadeExplosion(box: Box) {
-        if let boxIndex = self.obstacles.indexOf(box) {
+    func makeCascadeExplosion(_ box: Box) {
+        if let boxIndex = self.obstacles.index(of: box) {
             var loopCount: Int = 0
             // We got the index
             for i in boxIndex ..< self.obstacles.count {
                 if let boxInObstaclesArray = self.obstacles[i] as? Box {
-                    let time = NSTimeInterval(0.4 * Double(loopCount))
-                    _ = NSTimer.scheduledTimerWithTimeInterval(time, target: self, selector: #selector(ObstacleGroupTop.makeItemExplode(_:)), userInfo: boxInObstaclesArray, repeats: false)
+                    let time = TimeInterval(0.4 * Double(loopCount))
+                    _ = Timer.scheduledTimer(timeInterval: time, target: self, selector: #selector(ObstacleGroupTop.makeItemExplode(_:)), userInfo: boxInObstaclesArray, repeats: false)
 
-                    
-                    if let obstacle = self.obstacles[i + 1] as? Obstacle {
+                    if obstacles.count >= i + 2 {
+                        let obstacle = self.obstacles[i + 1]
                         obstacle.makeItDynamic()
                     }
                     
@@ -54,7 +54,7 @@ class ObstacleGroupTop: NSObject {
     }
     
     // MARK: - This function is called by the NSTimeInterval in makeCascadeExplosion
-    func makeItemExplode(sender: NSTimer) {
+    func makeItemExplode(_ sender: Timer) {
         if let box = sender.userInfo as? Box {
             box.playBoxExplodedAnimation()
         }

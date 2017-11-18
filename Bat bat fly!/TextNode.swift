@@ -17,7 +17,7 @@ class TextNode: SKSpriteNode {
         var charPositionX: CGFloat = 0
         let charactersCount: Int = scoreText.characters.count
         
-        for (index, char) in scoreText.characters.enumerate() {
+        for (index, char) in scoreText.characters.enumerated() {
             let charNode = SKSpriteNode(texture: TEXTURE_ATLAS.textureNamed("score-\(char)"))
             charNode.name = "\(char)"
             self.addChild(charNode)
@@ -37,12 +37,12 @@ class TextNode: SKSpriteNode {
         }
     }
     
-    func scaleByRatio(ratio: CGFloat) {
-        let scaleAction = SKAction.scaleTo(ratio, duration: 0)
+    func scaleByRatio(_ ratio: CGFloat) {
+        let scaleAction = SKAction.scale(to: ratio, duration: 0)
         var charPositionX: CGFloat = 0
         
         for child in self.children as! [SKSpriteNode] {
-            child.runAction(scaleAction)
+            child.run(scaleAction)
             
             child.position = CGPoint(x: charPositionX, y: 0)
             

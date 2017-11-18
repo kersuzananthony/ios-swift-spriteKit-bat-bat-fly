@@ -42,7 +42,7 @@ class GameManager {
     
     // MARK: - Return how many times the player has played to the game
     func getHowManyPlayerPlayedGame() -> Int {
-        if let numberTime = NSUserDefaults.standardUserDefaults().valueForKey(self.PLAYER_PLAY_GAME_TIME) as? Int {
+        if let numberTime = UserDefaults.standard.value(forKey: self.PLAYER_PLAY_GAME_TIME) as? Int {
             return numberTime
         } else {
             return 0
@@ -50,13 +50,13 @@ class GameManager {
     }
     
     // MARK: - Store the number of times the player has played
-    func setHowManyPlayerPlayerGame(playTime: Int) {
-        NSUserDefaults.standardUserDefaults().setValue(playTime, forKey: self.PLAYER_PLAY_GAME_TIME)
+    func setHowManyPlayerPlayerGame(_ playTime: Int) {
+        UserDefaults.standard.setValue(playTime, forKey: self.PLAYER_PLAY_GAME_TIME)
     }
     
     // MARK: - Store the user's preference concerning the sounds
     func getPlayerSoundPreference() -> Bool {
-        if let playerSoundPreference = NSUserDefaults.standardUserDefaults().valueForKey(self.PLAYER_SOUND_PREFERENCE) as? Bool {
+        if let playerSoundPreference = UserDefaults.standard.value(forKey: self.PLAYER_SOUND_PREFERENCE) as? Bool {
             return playerSoundPreference
         } else {
             return true
@@ -64,26 +64,26 @@ class GameManager {
     }
     
     // MARK: - Set the user preference
-    func setPlayerSoundPreference(soundPreference: Bool) {
-        NSUserDefaults.standardUserDefaults().setValue(soundPreference, forKey: self.PLAYER_SOUND_PREFERENCE)
+    func setPlayerSoundPreference(_ soundPreference: Bool) {
+        UserDefaults.standard.setValue(soundPreference, forKey: self.PLAYER_SOUND_PREFERENCE)
     }
     
     // MARK: -Get local best score
-    func getPlayerBestScore(difficulty: DifficultyLevel) -> Int {
+    func getPlayerBestScore(_ difficulty: DifficultyLevel) -> Int {
         if difficulty == DifficultyLevel.Easy {
-            if let playBestScore = NSUserDefaults.standardUserDefaults().valueForKey(self.PLAYER_BEST_SCORE_EASY) as? Int {
+            if let playBestScore = UserDefaults.standard.value(forKey: self.PLAYER_BEST_SCORE_EASY) as? Int {
                 return playBestScore
             } else {
                 return 0
             }
         } else if difficulty == DifficultyLevel.Medium {
-            if let playBestScore = NSUserDefaults.standardUserDefaults().valueForKey(self.PLAYER_BEST_SCORE_MEDIUM) as? Int {
+            if let playBestScore = UserDefaults.standard.value(forKey: self.PLAYER_BEST_SCORE_MEDIUM) as? Int {
                 return playBestScore
             } else {
                 return 0
             }
         } else if difficulty == DifficultyLevel.Hard {
-            if let playBestScore = NSUserDefaults.standardUserDefaults().valueForKey(self.PLAYER_BEST_SCORE_HARD) as? Int {
+            if let playBestScore = UserDefaults.standard.value(forKey: self.PLAYER_BEST_SCORE_HARD) as? Int {
                 return playBestScore
             } else {
                 return 0
@@ -94,19 +94,19 @@ class GameManager {
     }
     
     // MARK: - if the current score is greater than the previous best score, we store it locally and we send a request to the GameCenter
-    func setPlayerBestScore(score: Int, difficulty: DifficultyLevel) {
+    func setPlayerBestScore(_ score: Int, difficulty: DifficultyLevel) {
         let currentBestScore: Int = self.getPlayerBestScore(difficulty)
         
         if score > currentBestScore {
             var leaderboardId: String = ""
             if difficulty == DifficultyLevel.Easy {
-                NSUserDefaults.standardUserDefaults().setValue(score, forKey: self.PLAYER_BEST_SCORE_EASY)
+                UserDefaults.standard.setValue(score, forKey: self.PLAYER_BEST_SCORE_EASY)
                 leaderboardId = self.LEADERBOARD_EASY
             } else if difficulty == DifficultyLevel.Medium {
-                NSUserDefaults.standardUserDefaults().setValue(score, forKey: self.PLAYER_BEST_SCORE_MEDIUM)
+                UserDefaults.standard.setValue(score, forKey: self.PLAYER_BEST_SCORE_MEDIUM)
                 leaderboardId = self.LEADERBOARD_MEDIUM
             } else if difficulty == DifficultyLevel.Hard {
-                NSUserDefaults.standardUserDefaults().setValue(score, forKey: self.PLAYER_BEST_SCORE_HARD)
+                UserDefaults.standard.setValue(score, forKey: self.PLAYER_BEST_SCORE_HARD)
                 leaderboardId = self.LEADERBOARD_HARD
             }
             
@@ -117,7 +117,7 @@ class GameManager {
             
             sScore.value = Int64(score)
         
-            GKScore.reportScores([sScore], withCompletionHandler: { (error: NSError?) -> Void in
+            GKScore.report([sScore], withCompletionHandler: { (error: Error?) -> Void in
                 if error != nil {
                     print(error!.localizedDescription)
                 } else {
@@ -145,7 +145,7 @@ class GameManager {
     var batFlyingAnimationTexture: [SKTexture] = [SKTexture]()
     
     // MARK: -Function called when the user launch the app.
-    func preloadTextures(completed: Completed) {
+    func preloadTextures(_ completed: Completed) {
     
         self.trapDown = textureAtlas.textureNamed("trap-bottom")
         self.trapTop = textureAtlas.textureNamed("trap-top")

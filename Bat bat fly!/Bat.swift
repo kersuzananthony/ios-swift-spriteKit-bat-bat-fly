@@ -21,12 +21,12 @@ class Bat: SKSpriteNode {
     func setupCharacter() {
         
         self.zPosition = ZPosition.bat.rawValue
-        self.size = CGSizeMake(self.batSize, self.batSize)
+        self.size = CGSize(width: self.batSize, height: self.batSize)
         
         self.physicsBody = SKPhysicsBody(circleOfRadius: self.size.height / 2)
         self.physicsBody!.allowsRotation = false
         self.physicsBody?.mass = 0.1
-        self.physicsBody!.dynamic = true
+        self.physicsBody!.isDynamic = true
         
         self.physicsBody!.categoryBitMask = GameManager.sharedInstance.COLLIDER_PLAYER
         self.physicsBody!.contactTestBitMask = GameManager.sharedInstance.COLLIDER_BOMB | GameManager.sharedInstance.COLLIDER_TRAP | GameManager.sharedInstance.COLLIDER_GROUND
@@ -37,17 +37,17 @@ class Bat: SKSpriteNode {
     }
     
     func impulse() {
-        self.physicsBody?.velocity = CGVectorMake(0, 0)
-        self.physicsBody?.applyImpulse(CGVectorMake(0, 55))
+        self.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+        self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 55))
     }
     
-    func turnPhysicBodyDynamism(value: Bool) {
-        self.physicsBody!.dynamic = value
+    func turnPhysicBodyDynamism(_ value: Bool) {
+        self.physicsBody!.isDynamic = value
     }
     
     func playFlyAnim() {
         self.removeAllActions()
-        self.runAction(SKAction.repeatActionForever(SKAction.animateWithTextures(GameManager.sharedInstance.batFlyingAnimationTexture, timePerFrame: 0.1)))
+        self.run(SKAction.repeatForever(SKAction.animate(with: GameManager.sharedInstance.batFlyingAnimationTexture, timePerFrame: 0.1)))
     }
     
     func playExplodeAnim() {
@@ -58,11 +58,11 @@ class Bat: SKSpriteNode {
         let scaleYFactor = explodeFrames[explodeFrames.count - 1].size().height / self.size.height
         let scaleXFactor = explodeFrames[explodeFrames.count - 1].size().width / self.size.width
         
-        self.runAction(SKAction.animateWithTextures(explodeFrames, timePerFrame: 0.1))
-        self.runAction(SKAction.scaleXTo(scaleXFactor, duration: Double(explodeFrames.count) * 0.1))
-        self.runAction(SKAction.scaleYTo(scaleYFactor, duration: Double(explodeFrames.count) * 0.1))
+        self.run(SKAction.animate(with: explodeFrames, timePerFrame: 0.1))
+        self.run(SKAction.scaleX(to: scaleXFactor, duration: Double(explodeFrames.count) * 0.1))
+        self.run(SKAction.scaleY(to: scaleYFactor, duration: Double(explodeFrames.count) * 0.1))
         
-        _ = NSTimer.scheduledTimerWithTimeInterval(Double(explodeFrames.count - 1) * 0.1, target: self, selector: #selector(Bat.explosionNotification), userInfo: nil, repeats: false)
+        _ = Timer.scheduledTimer(timeInterval: Double(explodeFrames.count - 1) * 0.1, target: self, selector: #selector(Bat.explosionNotification), userInfo: nil, repeats: false)
     }
 
     func playTrappedAnim() {
@@ -71,7 +71,7 @@ class Bat: SKSpriteNode {
     }
     
     func explosionNotification() {
-        NSNotificationCenter.defaultCenter().postNotification(NSNotification(name: "explosionNotification", object: nil, userInfo: nil))
+        NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: "explosionNotification"), object: nil, userInfo: nil))
     }
 
 }

@@ -18,7 +18,7 @@ class TrapUp: Trap {
     }
     
     override func initPhysics() {
-        self.physicsBody = SKPhysicsBody(rectangleOfSize: CGSizeMake(self.size.width, 2 * self.size.height))
+        self.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: self.size.width, height: 2 * self.size.height))
         self.physicsBody!.categoryBitMask = GameManager.sharedInstance.COLLIDER_TRAP
         
         super.initPhysics()

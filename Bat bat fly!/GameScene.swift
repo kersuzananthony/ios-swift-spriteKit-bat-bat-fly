@@ -22,8 +22,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let colliderScore = GameManager.sharedInstance.COLLIDER_SCORE_GATE
     
     // Timers
-    var makeBoxesTimer: NSTimer!
-    var makeChainsTimer: NSTimer!
+    var makeBoxesTimer: Timer!
+    var makeChainsTimer: Timer!
     
     // Sounds
     var backgroundSound: AVAudioPlayer!
@@ -46,7 +46,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var userInterfaceElements: SKNode!
     
     // Variables
-    let BACKGROUND_DIMENSION = CGSizeMake(2560, 1136)
+    let BACKGROUND_DIMENSION = CGSize(width: 2560, height: 1136)
     var playSound: Bool!
     var gameIsStarted: Bool = false
     var modePause: Bool = false
@@ -57,9 +57,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let BG_X_RESET: CGFloat = -3000
     
     // MARK: -didMoveToView method
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
         
-        self.physicsWorld.gravity = CGVectorMake(0.0, -8)
+        self.physicsWorld.gravity = CGVector(dx: 0.0, dy: -8)
         self.physicsWorld.contactDelegate = self
         
         self.addChild(self.backgrounds)
@@ -87,28 +87,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     // MARK: -Add observes for the following notifications
     func registerForNotifications() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(GameScene.windowIsNowBroken), name: "explosionNotification", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(GameScene.removeMoveableObject(_:)), name: "removeMoveableObject", object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(GameScene.windowIsNowBroken), name: NSNotification.Name(rawValue: "explosionNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(GameScene.removeMoveableObject(_:)), name: NSNotification.Name(rawValue: "removeMoveableObject"), object: nil)
     }
     
     // MARK: - Preload all the sound effects the game needs
     func initializeSounds() {
         // Manage sounds
         do {
-            try self.backgroundSound = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("background", ofType: "wav")!))
+            try self.backgroundSound = AVAudioPlayer(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "background", ofType: "wav")!))
             
             self.backgroundSound.numberOfLoops = -1
             self.backgroundSound.prepareToPlay()
             
             self.backgroundSound.volume = 0.3
             
-            try self.sfxBomb = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("bomb", ofType: "wav")!))
+            try self.sfxBomb = AVAudioPlayer(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "bomb", ofType: "wav")!))
             self.sfxBomb.prepareToPlay()
             
-            try self.sfxGlass = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("mirror", ofType: "wav")!))
+            try self.sfxGlass = AVAudioPlayer(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "mirror", ofType: "wav")!))
             self.sfxBomb.prepareToPlay()
             
-            try self.sfxMetal = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("metal", ofType: "wav")!))
+            try self.sfxMetal = AVAudioPlayer(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "metal", ofType: "wav")!))
             self.sfxMetal.prepareToPlay()
             
             
@@ -120,12 +120,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     // MARK: - Set up ground
     func setUpGround() {
         let groundNode = SKNode()
-        groundNode.physicsBody = SKPhysicsBody(rectangleOfSize: CGSizeMake(self.frame.width, 1))
-        groundNode.physicsBody!.dynamic = false
+        groundNode.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: self.frame.width, height: 1))
+        groundNode.physicsBody!.isDynamic = false
         groundNode.physicsBody!.categoryBitMask = self.colliderGround
         groundNode.physicsBody!.contactTestBitMask =  self.colliderPlayer
         groundNode.physicsBody!.collisionBitMask = self.colliderPlayer | self.colliderBomb | self.colliderTrap
-        groundNode.position = CGPoint(x: CGRectGetMidX(self.frame), y: 0)
+        groundNode.position = CGPoint(x: self.frame.midX, y: 0)
         
         self.addChild(groundNode)
     }
@@ -133,9 +133,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     // MARK: - Set up ceil
     func setUpCeil() {
         let ceilNode = SKNode()
-        ceilNode.physicsBody = SKPhysicsBody(rectangleOfSize: CGSizeMake(self.frame.width, 1))
-        ceilNode.physicsBody!.dynamic = false
-        ceilNode.position = CGPoint(x: CGRectGetMidX(self.frame), y: self.frame.height - 48)
+        ceilNode.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: self.frame.width, height: 1))
+        ceilNode.physicsBody!.isDynamic = false
+        ceilNode.position = CGPoint(x: self.frame.midX, y: self.frame.height - 48)
         
         self.addChild(ceilNode)
     }
@@ -144,7 +144,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func setUpBackground() {
         self.headerNode = SKSpriteNode(texture: TEXTURE_ATLAS.textureNamed("header"))
         self.headerNode.anchorPoint = CGPoint(x: 0.5, y: 1)
-        self.headerNode.position = CGPoint(x: CGRectGetMidX(self.frame), y: self.frame.height)
+        self.headerNode.position = CGPoint(x: self.frame.midX, y: self.frame.height)
         self.headerNode.size.height = 48
         self.headerNode.size.width = 3000
         self.headerNode.name = "header"
@@ -161,8 +161,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let coefToScale: CGFloat = (self.frame.height - 48) / self.BACKGROUND_DIMENSION.height
         let backgroundTexture = SKTexture(imageNamed: "background")
         
-        let moveByXAction = SKAction.moveByX(GameManager.sharedInstance.BACKGROUND_SPEED, y: 0, duration: 0.02)
-        let moveBackgroundForever = SKAction.repeatActionForever(moveByXAction)
+        let moveByXAction = SKAction.moveBy(x: GameManager.sharedInstance.BACKGROUND_SPEED, y: 0, duration: 0.02)
+        let moveBackgroundForever = SKAction.repeatForever(moveByXAction)
 
         for i: Int in 0 ..< 3 {
             let backgroundNode = SKSpriteNode(texture: backgroundTexture)
@@ -177,14 +177,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         for background in self.backgroundsArray {
-            background.runAction(moveBackgroundForever)
+            background.run(moveBackgroundForever)
         }
     }
     
     // MARK: - Create a new Bat Object
     func createBat() {
         self.bat = Bat()
-        self.bat.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame))
+        self.bat.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
         self.addChild(self.bat)
     }
     
@@ -222,7 +222,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         levelSelector.size.width += hardNode.size.width + 20
         
         self.instructionsGroup.addChild(levelSelector)
-        levelSelector.position = CGPoint(x: CGRectGetMidX(self.frame) - levelSelector.size.width / 2, y: 50 + levelSelector.size.height / 2)
+        levelSelector.position = CGPoint(x: self.frame.midX - levelSelector.size.width / 2, y: 50 + levelSelector.size.height / 2)
         levelSelector.zPosition = ZPosition.userInterface.rawValue
     }
     
@@ -232,28 +232,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let arrowUpNode = SKSpriteNode(texture: TEXTURE_ATLAS.textureNamed("up-arrow"))
         self.instructionsGroup.addChild(arrowUpNode)
         arrowUpNode.zPosition = ZPosition.userInterface.rawValue
-        arrowUpNode.position = CGPoint(x: CGRectGetMidX(self.frame) - 7, y: CGRectGetMidY(self.frame) - self.bat.size.height / 2 - arrowUpNode.size.height / 2 - 8)
+        arrowUpNode.position = CGPoint(x: self.frame.midX - 7, y: self.frame.midY - self.bat.size.height / 2 - arrowUpNode.size.height / 2 - 8)
         
         let handNode = SKSpriteNode(texture: TEXTURE_ATLAS.textureNamed("hand"))
         self.instructionsGroup.addChild(handNode)
         handNode.zPosition = ZPosition.userInterface.rawValue
-        handNode.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame) - self.bat.size.height - arrowUpNode.size.height - handNode.size.height / 2)
+        handNode.position = CGPoint(x: self.frame.midX, y: self.frame.midY - self.bat.size.height - arrowUpNode.size.height - handNode.size.height / 2)
         
         let tapEffectNode = SKSpriteNode(texture: TEXTURE_ATLAS.textureNamed("tap-effect"))
-        let tapEffectFadeOutAction = SKAction.fadeAlphaTo(0.3, duration: 1)
-        let tapEffectFadeInAction = SKAction.fadeAlphaTo(1, duration: 1)
+        let tapEffectFadeOutAction = SKAction.fadeAlpha(to: 0.3, duration: 1)
+        let tapEffectFadeInAction = SKAction.fadeAlpha(to: 1, duration: 1)
         let tapEffectFadeInOutActionSequence = SKAction.sequence([tapEffectFadeOutAction, tapEffectFadeInAction])
-        let tapEffectFadeInOutForever = SKAction.repeatActionForever(tapEffectFadeInOutActionSequence)
-        tapEffectNode.runAction(tapEffectFadeInOutForever)
+        let tapEffectFadeInOutForever = SKAction.repeatForever(tapEffectFadeInOutActionSequence)
+        tapEffectNode.run(tapEffectFadeInOutForever)
         self.instructionsGroup.addChild(tapEffectNode)
         tapEffectNode.zPosition = ZPosition.userInterface.rawValue
-        tapEffectNode.position = CGPoint(x: CGRectGetMidX(self.frame) - 8, y: CGRectGetMidY(self.frame) - self.bat.size.height - 20)
+        tapEffectNode.position = CGPoint(x: self.frame.midX - 8, y: self.frame.midY - self.bat.size.height - 20)
         
         let readyNode = SKSpriteNode(texture: TEXTURE_ATLAS.textureNamed("ready"))
         readyNode.name = "readyNode"
         
         self.instructionsGroup.addChild(readyNode)
-        readyNode.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame) + self.bat.size.height + readyNode.size.height / 2)
+        readyNode.position = CGPoint(x: self.frame.midX, y: self.frame.midY + self.bat.size.height + readyNode.size.height / 2)
         readyNode.zPosition = ZPosition.userInterface.rawValue
         
         displayLevelSelector()
@@ -261,8 +261,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     // MARK: - Create times for making obstacles and chain
     func createTimers() {
-        self.makeBoxesTimer = NSTimer.scheduledTimerWithTimeInterval(2, target: self, selector: #selector(GameScene.makeObstacles), userInfo: nil, repeats: true)
-        self.makeChainsTimer = NSTimer.scheduledTimerWithTimeInterval(1.5, target: self, selector: #selector(GameScene.makeChain), userInfo: nil, repeats: true)
+        self.makeBoxesTimer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(GameScene.makeObstacles), userInfo: nil, repeats: true)
+        self.makeChainsTimer = Timer.scheduledTimer(timeInterval: 1.5, target: self, selector: #selector(GameScene.makeChain), userInfo: nil, repeats: true)
     }
     
     // MARK: - Update the score label at the bottom of the screen
@@ -276,7 +276,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.userInterfaceElements.addChild(scoreNode)
         
         scoreNode.zPosition =  ZPosition.userInterface.rawValue
-        scoreNode.position = CGPoint(x: CGRectGetMidX(self.frame) - scoreNode.size.width / 2 + 20, y: 50)
+        scoreNode.position = CGPoint(x: self.frame.midX - scoreNode.size.width / 2 + 20, y: 50)
     }
     
     // MARK: -Make play/pause button and sound/mute
@@ -311,7 +311,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     // MARK: - Objects contact method
-    func didBeginContact(contact: SKPhysicsContact) {
+    func didBegin(_ contact: SKPhysicsContact) {
         
         if !self.gameOver {
             if contact.bodyA.categoryBitMask == self.colliderTrap || contact.bodyB.categoryBitMask == self.colliderTrap {
@@ -327,7 +327,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     trap.playTrapClosedAnimation()
                 }
                 
-                if self.sfxMetal.playing {
+                if self.sfxMetal.isPlaying {
                     self.sfxMetal.stop()
                 }
                 
@@ -335,7 +335,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     self.sfxMetal.play()
                 }
                 
-                _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(GameScene.displayGameOverMessage), userInfo: nil, repeats: false)
+                _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(GameScene.displayGameOverMessage), userInfo: nil, repeats: false)
 
                 
             } else if contact.bodyA.categoryBitMask == self.colliderBomb || contact.bodyB.categoryBitMask == self.colliderBomb {
@@ -349,7 +349,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     self.makeBoxCascadeExplosion(box)
                 }
                 
-                if self.sfxBomb.playing {
+                if self.sfxBomb.isPlaying {
                     self.sfxBomb.stop()
                 }
                 
@@ -366,57 +366,57 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     // MARK: - Function called when the user hits a bomb. Many bombs explode according to their position on the scene
-    func makeBoxCascadeExplosion(box: Box) {
+    func makeBoxCascadeExplosion(_ box: Box) {
         
         for obstacleGroup in self.obstaclesGroup {
             if obstacleGroup.obstacleGroupBottom.obstacles.contains(box) {
-                obstacleGroup.makeCascadeExplosion(ObstacleGroup.ObstaclePosition.Bottom, box: box)
+                obstacleGroup.makeCascadeExplosion(ObstacleGroup.ObstaclePosition.bottom, box: box)
                 break
             }
             
             if obstacleGroup.obstacleGroupTop.obstacles.contains(box) {
-                obstacleGroup.makeCascadeExplosion(ObstacleGroup.ObstaclePosition.Top, box: box)
+                obstacleGroup.makeCascadeExplosion(ObstacleGroup.ObstaclePosition.top, box: box)
                 break
             }
         }
     }
     
     // MARK: - Touches manager
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         let touch = touches.first!
-        let viewTouchLocation = touch.locationInView(self.view)
-        let sceneTouchPoint = scene?.convertPointFromView(viewTouchLocation)
+        let viewTouchLocation = touch.location(in: self.view)
+        let sceneTouchPoint = scene?.convertPoint(fromView: viewTouchLocation)
         
         if !gameIsStarted {
-            if let node = scene?.nodeAtPoint(sceneTouchPoint!) where node.name == "easyLevel" {
+            if let node = scene?.atPoint(sceneTouchPoint!), node.name == "easyLevel" {
                 self.difficultyManager = DifficultyManager(difficultyLevel: .Easy)
                 startGame()
             }
             
-            if let node = scene?.nodeAtPoint(sceneTouchPoint!) where node.name == "mediumLevel" {
+            if let node = scene?.atPoint(sceneTouchPoint!), node.name == "mediumLevel" {
                 self.difficultyManager = DifficultyManager(difficultyLevel: .Medium)
                 startGame()
             }
             
-            if let node = scene?.nodeAtPoint(sceneTouchPoint!) where node.name == "hardLevel" {
+            if let node = scene?.atPoint(sceneTouchPoint!), node.name == "hardLevel" {
                 self.difficultyManager = DifficultyManager(difficultyLevel: .Hard)
                 startGame()
             }
         } else {
-            if CGRectContainsPoint(self.headerNode.frame, sceneTouchPoint!) {
+            if self.headerNode.frame.contains(sceneTouchPoint!) {
                 pauseGame()
             }
-            else if CGRectContainsPoint(self.headerNodeButton!.frame, sceneTouchPoint!) {
-                if let node = scene?.nodeAtPoint(sceneTouchPoint!) where node.name == "Pause" {
+            else if self.headerNodeButton!.frame.contains(sceneTouchPoint!) {
+                if let node = scene?.atPoint(sceneTouchPoint!), node.name == "Pause" {
                     pauseGame()
-                } else if let node = scene?.nodeAtPoint(sceneTouchPoint!) where node.name == "Play" {
+                } else if let node = scene?.atPoint(sceneTouchPoint!), node.name == "Play" {
                     restartGame()
                 }
-            } else if CGRectContainsPoint(self.soundButton!.frame, sceneTouchPoint!) {
-                if let node = scene?.nodeAtPoint(sceneTouchPoint!) where node.name == "Mute" {
+            } else if self.soundButton!.frame.contains(sceneTouchPoint!) {
+                if let node = scene?.atPoint(sceneTouchPoint!), node.name == "Mute" {
                     toggleSound()
-                } else if let node = scene?.nodeAtPoint(sceneTouchPoint!) where node.name == "Sound" {
+                } else if let node = scene?.atPoint(sceneTouchPoint!), node.name == "Sound" {
                     toggleSound()
                 }
             } else if self.gameOver == false && self.modePause == false {
@@ -424,22 +424,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             } else if self.gameOver == true && self.cancelTouchGestureRecognizer == false {
                 
                 // User wants to rate the app
-                if let node = scene?.nodeAtPoint(sceneTouchPoint!) where node.name == "rateButton" {
-                    NSNotificationCenter.defaultCenter().postNotification(NSNotification(name: "rateButton", object: nil))
+                if let node = scene?.atPoint(sceneTouchPoint!), node.name == "rateButton" {
+                    NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: "rateButton"), object: nil))
                 }
                 
                 // User wants to check classment
-                if let node = scene?.nodeAtPoint(sceneTouchPoint!) where node.name == "classmentButton" {
-                    NSNotificationCenter.defaultCenter().postNotification(NSNotification(name: "classmentButton", object: nil))
+                if let node = scene?.atPoint(sceneTouchPoint!), node.name == "classmentButton" {
+                    NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: "classmentButton"), object: nil))
                 }
                 
                 // User wants to share score to his friends
-                if let node = scene?.nodeAtPoint(sceneTouchPoint!) where node.name == "shareButton" {
-                    NSNotificationCenter.defaultCenter().postNotification(NSNotification(name: "shareButton", object: self.score, userInfo: nil))
+                if let node = scene?.atPoint(sceneTouchPoint!), node.name == "shareButton" {
+                    NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: "shareButton"), object: self.score, userInfo: nil))
                 }
                 
                 // User wants to restart the game
-                if let node = scene?.nodeAtPoint(sceneTouchPoint!) where node.name == "restartButton" {
+                if let node = scene?.atPoint(sceneTouchPoint!), node.name == "restartButton" {
                     
                     self.gameOverScreen.removeGameOverScreen()
         
@@ -449,7 +449,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                     self.obstaclesGroup = [ObstacleGroup]()
                     
-                    NSNotificationCenter.defaultCenter().postNotification(NSNotification(name: "gameOver", object: nil))
+                    NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: "gameOver"), object: nil))
                 }
             }
         }
@@ -477,14 +477,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         windowBrokenNode.position = self.bat.position
         windowBrokenNode.zPosition = ZPosition.windowBroken.rawValue
         
-        let scaleDownAction = SKAction.scaleTo(0, duration: 0)
-        let scaleUpAction = SKAction.scaleTo(1.5, duration: 0.5)
+        let scaleDownAction = SKAction.scale(to: 0, duration: 0)
+        let scaleUpAction = SKAction.scale(to: 1.5, duration: 0.5)
         let scaleSequence = SKAction.sequence([scaleDownAction, scaleUpAction])
-        windowBrokenNode.runAction(scaleSequence)
+        windowBrokenNode.run(scaleSequence)
         
         self.addChild(windowBrokenNode)
         
-        if self.sfxGlass.playing {
+        if self.sfxGlass.isPlaying {
             self.sfxGlass.stop()
         }
         
@@ -492,14 +492,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.sfxGlass.play()
         }
         
-        _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(GameScene.displayGameOverMessage), userInfo: nil, repeats: false)
+        _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(GameScene.displayGameOverMessage), userInfo: nil, repeats: false)
     }
     
     // MARK: - Function called when user loses and animations have been played
     func displayGameOverMessage() {
     
         self.backgroundSound.stop()
-        let screenWidth = UIScreen.mainScreen().bounds.width * 0.70
+        let screenWidth = UIScreen.main.bounds.width * 0.70
         
         self.gameOverScreen = GameOverScreen(screenWidth: screenWidth, frame: self.frame, playerScore: self.score, bestScore: GameManager.sharedInstance.getPlayerBestScore(self.difficultyManager.difficultyLevel))
         
@@ -510,7 +510,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             child.removeFromParent()
         }
         
-        _ = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(GameScene.canReplay), userInfo: nil, repeats: false)
+        _ = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(GameScene.canReplay), userInfo: nil, repeats: false)
     }
     
     // MARK: - Function called when the user starts the game (= first tap on the game)
@@ -589,9 +589,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         var diffWidth: CGFloat = 0
-        let screenWidth = UIScreen.mainScreen().bounds.width
+        let screenWidth = UIScreen.main.bounds.width
         
-        if screenWidth / 2 >= 480 && (UIScreen.mainScreen().bounds.size != CGSize(width: 1024, height: 1366)) {
+        if screenWidth / 2 >= 480 && (UIScreen.main.bounds.size != CGSize(width: 1024, height: 1366)) {
             diffWidth = 480
         } else {
             if screenWidth / 2 >= 256 {
@@ -608,7 +608,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.userInterfaceElements.addChild(headerNodeButton!)
         self.headerNodeButton!.size.height = 48 * 0.8
         self.headerNodeButton!.size.width = pauseNodeTexture.size().width * (self.headerNodeButton!.size.height / pauseNodeTexture.size().height)
-        self.headerNodeButton!.position = CGPoint(x: CGRectGetMidX(self.frame) - diffWidth + self.headerNodeButton!.size.width / 2, y: self.frame.height - 80 - self.headerNodeButton!.size.height)
+        self.headerNodeButton!.position = CGPoint(x: self.frame.midX - diffWidth + self.headerNodeButton!.size.width / 2, y: self.frame.height - 80 - self.headerNodeButton!.size.height)
         self.headerNodeButton!.zPosition = ZPosition.userInterface.rawValue
     }
     
@@ -628,9 +628,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         var diffWidth: CGFloat = 0
-        let screenWidth = UIScreen.mainScreen().bounds.width
+        let screenWidth = UIScreen.main.bounds.width
         
-        if screenWidth / 2 >= 480 && (UIScreen.mainScreen().bounds.size != CGSize(width: 1024, height: 1366)) {
+        if screenWidth / 2 >= 480 && (UIScreen.main.bounds.size != CGSize(width: 1024, height: 1366)) {
             diffWidth = 480
         } else {
             if screenWidth / 2 >= 256 {
@@ -647,7 +647,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.userInterfaceElements.addChild(self.soundButton!)
         self.soundButton!.size.height = 48 * 0.8
         self.soundButton!.size.width = soundNodeTexture.size().width * (self.soundButton!.size.height / soundNodeTexture.size().height)
-        self.soundButton!.position = CGPoint(x: CGRectGetMidX(self.frame) + diffWidth - self.soundButton!.size.width / 2, y: self.frame.height - 80 - self.soundButton!.size.height)
+        self.soundButton!.position = CGPoint(x: self.frame.midX + diffWidth - self.soundButton!.size.width / 2, y: self.frame.height - 80 - self.soundButton!.size.height)
         self.soundButton!.zPosition = ZPosition.userInterface.rawValue
 
         
@@ -664,8 +664,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.makeBoxesTimer = nil
         
         for movingNode in self.movingGameObjects.children {
-            if let _ = movingNode.actionForKey("moveItForever") {
-                movingNode.removeActionForKey("moveItForever")
+            if let _ = movingNode.action(forKey: "moveItForever") {
+                movingNode.removeAction(forKey: "moveItForever")
             }
         }
         self.backgrounds.speed = 0
@@ -683,7 +683,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
    
     // MARK: - Function called each time per frame, it calculates the position of each moving objects and remove it from the parent if it exceeds bounds
-    override func update(currentTime: CFTimeInterval) {
+    override func update(_ currentTime: TimeInterval) {
         if self.gameOver || self.modePause {
             return
         } else {
@@ -702,7 +702,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         index = x - 1
                     }
                     
-                    let newPos = CGPointMake(self.backgroundsArray[index].position.x + self.backgroundsArray[x].size.width, self.backgroundsArray[x].position.y)
+                    let newPos = CGPoint(x: self.backgroundsArray[index].position.x + self.backgroundsArray[x].size.width, y: self.backgroundsArray[x].position.y)
                     
                     self.backgroundsArray[x].position = newPos
                 }
@@ -716,7 +716,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     // MARK: - Function called when this gameScene receives notification from Moveable class. Moveable object has been removed and we need to clean moveableObjects child array
-    func removeMoveableObject(sender: NSNotification) {
+    func removeMoveableObject(_ sender: Notification) {
         if let obstacle = sender.object as? Obstacle {
             obstacle.removeFromParent()
         }

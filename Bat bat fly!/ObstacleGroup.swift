@@ -15,8 +15,8 @@ class ObstacleGroup {
     var scoreGate: ScoreGate!
     
     enum ObstaclePosition: Int {
-        case Top = 1
-        case Bottom = 2
+        case top = 1
+        case bottom = 2
     }
     
     init(screenHeight: CGFloat, difficulty: DifficultyManager) {
@@ -31,10 +31,10 @@ class ObstacleGroup {
         self.scoreGate.startMoving(yPos: self.scoreGate.size.height / 2)
     }
     
-    func makeCascadeExplosion(position: ObstaclePosition, box: Box) {
-        if position == ObstaclePosition.Bottom {
+    func makeCascadeExplosion(_ position: ObstaclePosition, box: Box) {
+        if position == ObstaclePosition.bottom {
             self.obstacleGroupBottom.makeCascadeExplosion(box)
-        } else if position == ObstaclePosition.Top {
+        } else if position == ObstaclePosition.top {
             self.obstacleGroupTop.makeCascadeExplosion(box)
         }
     }
