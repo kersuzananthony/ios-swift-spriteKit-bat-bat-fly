@@ -70,7 +70,7 @@ class Bat: SKSpriteNode {
         self.removeFromParent()
     }
     
-    func explosionNotification() {
+    @objc func explosionNotification() {
         NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: "explosionNotification"), object: nil, userInfo: nil))
     }
 

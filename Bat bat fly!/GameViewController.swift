@@ -8,7 +8,6 @@
 
 import UIKit
 import SpriteKit
-import iAd
 import GameKit
 import Social
 import Accounts
@@ -58,7 +57,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(GameViewController.gameOver), name: NSNotification.Name(rawValue: "gameOver"), object: nil)
     }
     
-    func gameOver() {
+    @objc func gameOver() {
         gamePlayTime += 1
         
         GameManager.sharedInstance.setHowManyPlayerPlayerGame(self.gamePlayTime)
@@ -114,27 +113,26 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     
     func authenticateLocalPlayer() {
         let localPlayer: GKLocalPlayer = GKLocalPlayer.localPlayer()
-        localPlayer.authenticateHandler = {(ViewController, error) -> Void in
-            if((ViewController) != nil) {
+        localPlayer.authenticateHandler = {(viewController, error) -> Void in
+            if((viewController) != nil) {
                 // 1 Show login if player is not logged in
-                self.present(ViewController!, animated: true, completion: nil)
+                self.present(viewController!, animated: true, completion: nil)
             } else if (localPlayer.isAuthenticated) {
                 // 2 Player is already euthenticated & logged in, load game center
                 self.gcEnabled = true
                 
                 // Get the default leaderboard ID
                 localPlayer.loadDefaultLeaderboardIdentifier(completionHandler: { (leaderboardIdentifer: String?, error: Error?) -> Void in
-                    if error != nil {
-                        
-                        print(error)
+                    if let e = error {
+                        print(e.localizedDescription)
                     } else {
                         print(leaderboardIdentifer!)
                         let leaderBoard = GKLeaderboard()
 
                         leaderBoard.identifier = leaderboardIdentifer!
                         leaderBoard.loadScores(completionHandler: { (score: [GKScore]?, error: Error?) -> Void in
-                            if error != nil {
-                                print(error)
+                            if let e = error {
+                                print(e.localizedDescription)
                             } else {
                                 print("local player is \(localPlayer)")
                                 let score = GKScore(leaderboardIdentifier: leaderboardIdentifer!, player: localPlayer)
@@ -149,7 +147,6 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
                 // 3 Game center is not enabled on the users device
                 self.gcEnabled = false
                 print("Local player could not be authenticated, disabling game center")
-                print(error)
             }
         }
         
@@ -159,7 +156,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         gameCenterViewController.dismiss(animated: true, completion: nil)
     }
     
-    func shareTo(_ sender: Notification) {
+    @objc func shareTo(_ sender: Notification) {
         if let score = sender.object as? Int {
             let sentence = "Hey, I've played to \"Bat bat fly\" game and got \(score). Do you think you can get a better score? Go on, download the game and try!"
             let url = URL(string: "http://itunes.apple.com/app/id\(APP_ID)")!
@@ -192,7 +189,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     }
     
     // MARK: -Show the statistics of the user using GameCenter Leaderboard
-    func showGameCenterStatistics() {
+    @objc func showGameCenterStatistics() {
         let gcVC: GKGameCenterViewController = GKGameCenterViewController()
         gcVC.gameCenterDelegate = self
         gcVC.viewState = GKGameCenterViewControllerState.leaderboards
@@ -200,7 +197,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         self.present(gcVC, animated: true, completion: nil)
     }
     
-    func rateApp() {
+    @objc func rateApp() {
         let alertViewController = UIAlertController(title: "Rate", message: "Do you want to rate our game?", preferredStyle: .alert)
         
         let cancelAction = UIAlertAction(title: "Later", style: .cancel) { (action: UIAlertAction) -> Void in

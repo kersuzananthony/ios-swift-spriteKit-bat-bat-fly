@@ -48,7 +48,7 @@ class ObstacleGroupBottom: NSObject {
         }
     }
     
-    func makeItemExplode(_ sender: Timer) {
+    @objc func makeItemExplode(_ sender: Timer) {
         if let box = sender.userInfo as? Box {
             box.playBoxExplodedAnimation()
         }

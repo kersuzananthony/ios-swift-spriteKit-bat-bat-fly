@@ -8,7 +8,7 @@
 
 import SpriteKit
 
-extension SKNode {
+@objc extension SKNode {
     func update() {
         
     }

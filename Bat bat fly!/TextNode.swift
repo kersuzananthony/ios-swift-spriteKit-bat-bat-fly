@@ -15,9 +15,9 @@ class TextNode: SKSpriteNode {
         
         let scoreText = "\(score)"
         var charPositionX: CGFloat = 0
-        let charactersCount: Int = scoreText.characters.count
+        let charactersCount: Int = scoreText.count
         
-        for (index, char) in scoreText.characters.enumerated() {
+        for (index, char) in scoreText.enumerated() {
             let charNode = SKSpriteNode(texture: TEXTURE_ATLAS.textureNamed("score-\(char)"))
             charNode.name = "\(char)"
             self.addChild(charNode)

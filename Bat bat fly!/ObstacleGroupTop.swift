@@ -54,7 +54,7 @@ class ObstacleGroupTop: NSObject {
     }
     
     // MARK: - This function is called by the NSTimeInterval in makeCascadeExplosion
-    func makeItemExplode(_ sender: Timer) {
+    @objc func makeItemExplode(_ sender: Timer) {
         if let box = sender.userInfo as? Box {
             box.playBoxExplodedAnimation()
         }

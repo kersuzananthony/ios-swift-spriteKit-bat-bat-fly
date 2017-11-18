@@ -286,14 +286,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     // MARK: - Create chains.
-    func makeChain() {
+    @objc func makeChain() {
         let chainNode = Chain()
         chainNode.startMoving(yPos: self.frame.height - 48 - chainNode.size.height / 2)
         self.movingGameObjects.addChild(chainNode)
     }
     
     // MARK: - Create obstacles (bomb + trap). A timer calls this method
-    func makeObstacles() {
+    @objc func makeObstacles() {
         let obstacleGroup = ObstacleGroup(screenHeight: self.frame.height, difficulty: self.difficultyManager)
 
         for obstacle in obstacleGroup.obstacleGroupTop.obstacles {
@@ -471,7 +471,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     // MARK: - Function called when the user hits a bomb and animations of bomb and bat have already been played.
-    func windowIsNowBroken() {
+    @objc func windowIsNowBroken() {
         
         let windowBrokenNode = SKSpriteNode(imageNamed: "cracking-glass")
         windowBrokenNode.position = self.bat.position
@@ -496,7 +496,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     // MARK: - Function called when user loses and animations have been played
-    func displayGameOverMessage() {
+    @objc func displayGameOverMessage() {
     
         self.backgroundSound.stop()
         let screenWidth = UIScreen.main.bounds.width * 0.70
@@ -608,7 +608,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.userInterfaceElements.addChild(headerNodeButton!)
         self.headerNodeButton!.size.height = 48 * 0.8
         self.headerNodeButton!.size.width = pauseNodeTexture.size().width * (self.headerNodeButton!.size.height / pauseNodeTexture.size().height)
-        self.headerNodeButton!.position = CGPoint(x: self.frame.midX - diffWidth + self.headerNodeButton!.size.width / 2, y: self.frame.height - 80 - self.headerNodeButton!.size.height)
+        self.headerNodeButton!.position = CGPoint(x: self.frame.midX - diffWidth + self.headerNodeButton!.size.width * 1.5, y: self.frame.height - 80 - self.headerNodeButton!.size.height)
         self.headerNodeButton!.zPosition = ZPosition.userInterface.rawValue
     }
     
@@ -647,7 +647,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.userInterfaceElements.addChild(self.soundButton!)
         self.soundButton!.size.height = 48 * 0.8
         self.soundButton!.size.width = soundNodeTexture.size().width * (self.soundButton!.size.height / soundNodeTexture.size().height)
-        self.soundButton!.position = CGPoint(x: self.frame.midX + diffWidth - self.soundButton!.size.width / 2, y: self.frame.height - 80 - self.soundButton!.size.height)
+        self.soundButton!.position = CGPoint(x: self.frame.midX + diffWidth - self.soundButton!.size.width * 1.5, y: self.frame.height - 80 - self.soundButton!.size.height)
         self.soundButton!.zPosition = ZPosition.userInterface.rawValue
 
         
@@ -711,12 +711,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     // MARK: - Function called 2 seconds after gameOverScreen has appeared. It allows the user to replay
-    func canReplay() {
+    @objc func canReplay() {
         self.cancelTouchGestureRecognizer = false
     }
     
     // MARK: - Function called when this gameScene receives notification from Moveable class. Moveable object has been removed and we need to clean moveableObjects child array
-    func removeMoveableObject(_ sender: Notification) {
+    @objc func removeMoveableObject(_ sender: Notification) {
         if let obstacle = sender.object as? Obstacle {
             obstacle.removeFromParent()
         }
